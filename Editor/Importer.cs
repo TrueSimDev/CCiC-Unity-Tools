@@ -78,6 +78,7 @@ namespace Reallusion.Import
         public const int FLAG_READ_WRITE = 2048;
         public const int FLAG_UNCOMPRESSED = 4096;
         public const int FLAG_SINGLE_CHANNEL = 8192;
+        //public const int FLAG_SINGLE_CHANNEL = 4096;
         public const int FLAG_FLOAT = 16384;
         public const int FLAG_FOR_ARRAY = 32768;
 
@@ -511,13 +512,23 @@ namespace Reallusion.Import
 
                         Util.LogInfo("    Material name: " + sourceName + ", type:" + materialType.ToString());
 
-                        // re-use or create the material.
-                        Material mat = CreateRemapMaterial(materialType, sharedMat, sourceName, matJson);
+                        bool isNail = sourceName == "Std_Nails";
+                        bool isHeadOrBody = (materialType == MaterialType.Skin || materialType == MaterialType.Head) && !isNail;
 
-                        // connect the textures.
-                        if (mat) ProcessTextures(obj, sourceName, sharedMat, mat, materialType, matJson);
+                        if ((isHeadOrBody && !characterInfo.RetainCustomBodyShaders) || !isHeadOrBody)
+                        {
+                            // re-use or create the material.
+                            Material mat = CreateRemapMaterial(materialType, sharedMat, sourceName, matJson);
 
-                        processedBuildMaterials.Add(sourceName);
+                            // connect the textures.
+                            if (mat) ProcessTextures(obj, sourceName, sharedMat, mat, materialType, matJson);
+
+                            processedBuildMaterials.Add(sourceName);
+                        }
+                        else
+                        {
+                            Util.LogInfo("    Material name: " + sourceName + " skipped processing.");
+                        }
                     }
                     else
                     {

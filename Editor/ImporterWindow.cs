@@ -93,7 +93,7 @@ namespace Reallusion.Import
         const float ACTION_BUTTON_SPACE = 4f;
         const float BUTTON_HEIGHT = 40f;
         const float INFO_HEIGHT = 80f;
-        const float OPTION_HEIGHT = 170f;
+        const float OPTION_HEIGHT = 220f;
         const float ACTION_HEIGHT = 76f;
         const float ICON_WIDTH = 100f; // re-purposed below for draggable width icon area
         const float ACTION_WIDTH = ACTION_BUTTON_SIZE + 12f;
@@ -991,6 +991,19 @@ namespace Reallusion.Import
 
             GUILayout.Space(8f);
 
+            EditorGUI.BeginDisabledGroup(EditorApplication.isPlaying || contextCharacter.BuiltBasicMaterials);
+            if(EditorGUILayout.DropdownButton(
+                content: new GUIContent(contextCharacter.RetainCustomBodyShaders ? "Retain Custom Body Shaders" : "Use CC Shaders"),
+                focusType: FocusType.Passive))
+            {
+                GenericMenu menu = new GenericMenu();
+                menu.AddItem(new GUIContent("Retain Custom Body Shaders"), contextCharacter.RetainCustomBodyShaders, RetainShaderOptionSelected, true);
+                menu.AddItem(new GUIContent("Use CC Shaders"), !contextCharacter.RetainCustomBodyShaders, RetainShaderOptionSelected, false);
+                menu.ShowAsContext();
+            }
+            EditorGUI.EndDisabledGroup();
+
+            GUILayout.Space(8f);
             //
             // BUILD BUTTON
             //
@@ -1556,6 +1569,11 @@ namespace Reallusion.Import
         private void BakePrefabOptionSelected(object sel)
         {
             contextCharacter.BakeSeparatePrefab = (bool)sel;
+        }
+
+        private void RetainShaderOptionSelected(object sel)
+        {
+            contextCharacter.RetainCustomBodyShaders = (bool)sel;
         }
 
         public static void TrySetMultiPass(bool state)
