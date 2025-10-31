@@ -981,6 +981,16 @@ namespace Reallusion.Import
                     menu.ShowAsContext();
                 }
 
+                if (EditorGUILayout.DropdownButton(
+                    content: new GUIContent(characterSettings.RetainCustomAnimator ? "Retain Custom Animator" : "Use CC Animator"),
+                    focusType: FocusType.Passive))
+                {
+                    GenericMenu menu = new GenericMenu();
+                    menu.AddItem(new GUIContent("Retain Custom Animator"), characterSettings.RetainCustomAnimator, RetainAnimatorOptionSelected, true);
+                    menu.AddItem(new GUIContent("Use CC Animator"), !characterSettings.RetainCustomAnimator, RetainAnimatorOptionSelected, false);
+                    menu.ShowAsContext();
+                }
+
                 GUILayout.Space(8f);
 
                 GUILayout.BeginHorizontal();
@@ -1069,6 +1079,7 @@ namespace Reallusion.Import
                     if (characterSettings.BakeCustomShaders != original.BakeCustomShaders) dirty = true;
                     if (characterSettings.BakeSeparatePrefab != original.BakeSeparatePrefab) dirty = true;
                     if (characterSettings.RetainCustomBodyShaders != original.RetainCustomBodyShaders) dirty = true;
+                    if (characterSettings.RetainCustomAnimator != original.RetainCustomAnimator) dirty = true;
                 }
             }
             characterSettings.settingsChanged = dirty;
@@ -1366,6 +1377,12 @@ namespace Reallusion.Import
         private void RetainShaderOptionSelected(object sel)
         {
             characterSettings.RetainCustomBodyShaders = (bool)sel;
+            ValidateSettings(characterSettings);
+        }
+
+        private void RetainAnimatorOptionSelected(object sel)
+        {
+            characterSettings.RetainCustomAnimator = (bool)sel;
             ValidateSettings(characterSettings);
         }
 

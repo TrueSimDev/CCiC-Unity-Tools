@@ -119,6 +119,7 @@ namespace Reallusion.Import
         private bool bakeCustomShaders = true;
         private bool bakeSeparatePrefab = true;
         private bool retainCustomBodyShaders = true;
+        private bool retainCustomAnimator = true;
         
         public struct GUIDRemap
         {
@@ -254,6 +255,7 @@ namespace Reallusion.Import
         public bool BakeCustomShaders { get { return bakeCustomShaders; } set { bakeCustomShaders = value; } }
         public bool BakeSeparatePrefab { get { return bakeSeparatePrefab; } set { bakeSeparatePrefab = value; } }       
         public bool RetainCustomBodyShaders { get { return retainCustomBodyShaders; } set { retainCustomBodyShaders = value; } }
+        public bool RetainCustomAnimator { get { return retainCustomAnimator; } set {  retainCustomAnimator = value; } }
         public TexSizeQuality QualTexSize { get { return qualTexSize; } set { qualTexSize = value; } }
         public TexCompressionQuality QualTexCompress { get { return qualTexCompress; } set { qualTexCompress = value; } }
 

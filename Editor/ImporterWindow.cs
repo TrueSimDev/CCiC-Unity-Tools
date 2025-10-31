@@ -1001,6 +1001,16 @@ namespace Reallusion.Import
                 menu.AddItem(new GUIContent("Use CC Shaders"), !contextCharacter.RetainCustomBodyShaders, RetainShaderOptionSelected, false);
                 menu.ShowAsContext();
             }
+
+            if (EditorGUILayout.DropdownButton(
+                content: new GUIContent(contextCharacter.RetainCustomAnimator ? "Retain Custom Animator" : "Use CC Animator"),
+                focusType: FocusType.Passive))
+            {
+                GenericMenu menu = new GenericMenu();
+                menu.AddItem(new GUIContent("Retain Custom Animator"), contextCharacter.RetainCustomAnimator, RetainAnimatorOptionSelected, true);
+                menu.AddItem(new GUIContent("Use CC Animator"), !contextCharacter.RetainCustomAnimator, RetainAnimatorOptionSelected, false);
+                menu.ShowAsContext();
+            }
             EditorGUI.EndDisabledGroup();
 
             GUILayout.Space(8f);
@@ -1574,6 +1584,11 @@ namespace Reallusion.Import
         private void RetainShaderOptionSelected(object sel)
         {
             contextCharacter.RetainCustomBodyShaders = (bool)sel;
+        }
+
+        private void RetainAnimatorOptionSelected(object sel)
+        {
+            contextCharacter.RetainCustomAnimator = (bool)sel;
         }
 
         public static void TrySetMultiPass(bool state)
