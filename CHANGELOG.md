@@ -1,6 +1,9 @@
 Changelog
 =========
 
+### 2.1.1
+- Removed inproperly used [SerializeField] attribute from AnimPlayerGUI
+ 
 ### 2.1.0
 - Shader update for CC5 HD characters.
     - Eye shader updates
