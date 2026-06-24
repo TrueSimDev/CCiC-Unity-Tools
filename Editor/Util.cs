@@ -1148,7 +1148,7 @@ namespace Reallusion.Import
 
         public static bool TrySerializeAssetToEditorPrefs(Object asset, string editorPrefsKey)
         {            
-            int assetInstanceID = asset.GetEntityId();
+            var assetInstanceID = asset.GetEntityId();
             if (AssetDatabase.TryGetGUIDAndLocalFileIdentifier(assetInstanceID, out string guid, out long localid))
             {
                 string outString = assetInstanceID.ToString() + delimiterChar + guid.ToString() + delimiterChar + localid.ToString();
