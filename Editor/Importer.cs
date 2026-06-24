@@ -227,7 +227,7 @@ namespace Reallusion.Import
             // fetch all the asset details for this character fbx object.
             characterInfo = info;
             fbx = info.Fbx;
-            id = fbx.GetInstanceID();
+            id = fbx.GetEntityId();
             fbxPath = info.path;
             AssetDatabase.Refresh();
             importer = (ModelImporter)AssetImporter.GetAtPath(fbxPath);
