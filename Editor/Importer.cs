@@ -42,7 +42,7 @@ namespace Reallusion.Import
         private readonly string materialsFolder;
         private readonly string characterName;
         private readonly string motionPrefix;
-        private readonly int id;
+        private readonly EntityId id;
         private readonly List<string> textureFolders;
         private readonly ModelImporter importer;
         private readonly List<string> importAssets = new List<string>();
