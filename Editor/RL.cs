@@ -169,28 +169,50 @@ namespace Reallusion.Import
             // ideally using the legacy blend shape normals option, but this has not been exposed to scripts so...
             int importSet = 0;
             if (info.IsBlenderProject) importSet = 1;
-            switch(importSet)
+
+            importer.keepQuads = false;
+            importer.weldVertices = true;
+            importer.importTangents = ModelImporterTangents.CalculateMikk;
+
+            switch (importSet)
             {
                 case 0: // From CC3/4
-                    if (Importer.BUILD_NORMALS_MODE == 0)
+                    switch (Importer.BUILD_NORMALS_MODE)
                     {
-                        importer.importNormals = ModelImporterNormals.Import;
-                        importer.importBlendShapes = true;
-                        importer.importBlendShapeNormals = ModelImporterNormals.Import;
-                        importer.normalCalculationMode = ModelImporterNormalCalculationMode.AreaAndAngleWeighted;
-                        importer.normalSmoothingSource = ModelImporterNormalSmoothingSource.PreferSmoothingGroups;
-                        importer.normalSmoothingAngle = 180f;
-                        ForceLegacyBlendshapeNormals(importer, true);
-                    }
-                    else
-                    {
-                        importer.importNormals = ModelImporterNormals.Calculate;
-                        importer.importBlendShapes = true;
-                        importer.importBlendShapeNormals = ModelImporterNormals.Calculate;
-                        importer.normalCalculationMode = ModelImporterNormalCalculationMode.AreaAndAngleWeighted;
-                        importer.normalSmoothingSource = ModelImporterNormalSmoothingSource.PreferSmoothingGroups;
-                        importer.normalSmoothingAngle = 180f;
-                        ForceLegacyBlendshapeNormals(importer, false);
+                        ///Consistent Normals
+                        ///This method should be used when its important that every character has identical vertexcount.
+                        case 0:
+                            importer.weldVertices = false;
+                            importer.importNormals = ModelImporterNormals.Import;
+                            importer.importBlendShapes = true;
+                            importer.importBlendShapeNormals = ModelImporterNormals.Import;
+                            importer.normalCalculationMode = ModelImporterNormalCalculationMode.AreaAndAngleWeighted;
+                            importer.importTangents = ModelImporterTangents.CalculateLegacyWithSplitTangents;
+                            importer.normalSmoothingAngle = 180f;
+                            ForceLegacyBlendshapeNormals(importer, true);
+                            break;
+
+                        ///Import Normals
+                        case 1:
+                            importer.importNormals = ModelImporterNormals.Import;
+                            importer.importBlendShapes = true;
+                            importer.importBlendShapeNormals = ModelImporterNormals.Import;
+                            importer.normalCalculationMode = ModelImporterNormalCalculationMode.AreaAndAngleWeighted;
+                            importer.normalSmoothingSource = ModelImporterNormalSmoothingSource.PreferSmoothingGroups;
+                            importer.normalSmoothingAngle = 180f;
+                            ForceLegacyBlendshapeNormals(importer, true);
+                            break;
+
+                        ///Calculate Normals
+                        case 2:
+                            importer.importNormals = ModelImporterNormals.Calculate;
+                            importer.importBlendShapes = true;
+                            importer.importBlendShapeNormals = ModelImporterNormals.Calculate;
+                            importer.normalCalculationMode = ModelImporterNormalCalculationMode.AreaAndAngleWeighted;
+                            importer.normalSmoothingSource = ModelImporterNormalSmoothingSource.PreferSmoothingGroups;
+                            importer.normalSmoothingAngle = 180f;
+                            ForceLegacyBlendshapeNormals(importer, false);
+                            break;
                     }
                     break;
                 case 1: // From Blender
@@ -216,12 +238,9 @@ namespace Reallusion.Import
                     }
                     break;                    
             }
-            importer.importTangents = ModelImporterTangents.CalculateMikk;
             importer.generateAnimations = ModelImporterGenerateAnimations.GenerateAnimations;
             importer.animationType = ModelImporterAnimationType.Human;
-            importer.avatarSetup = ModelImporterAvatarSetup.CreateFromThisModel;
-            importer.keepQuads = false;
-            importer.weldVertices = true;            
+            importer.avatarSetup = ModelImporterAvatarSetup.CreateFromThisModel;      
 
             importer.autoGenerateAvatarMappingIfUnspecified = true;
             
