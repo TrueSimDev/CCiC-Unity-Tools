@@ -28,6 +28,7 @@ using UnityEngine;
 using UnityEngine.Diagnostics;
 using static Codice.Client.BaseCommands.Import.Commit;
 
+
 namespace Reallusion.Import
 {
     public class Importer
@@ -474,6 +475,13 @@ namespace Reallusion.Import
 
             // save final prefab instance and remove from scene
             GameObject prefabAsset = RL.SaveAndRemovePrefabInstance(prefabInstance, prefabAssetPath);
+            var prefabInstancePath = Path.Join(Path.GetDirectoryName(prefabAssetPath), Path.GetFileNameWithoutExtension(prefabAssetPath)) + "_Instance.prefab";
+
+            if (!Util.AssetPathExists(prefabInstancePath))
+            {
+                var patientInstance = PrefabUtility.InstantiatePrefab(prefabAsset) as GameObject;
+                var patientPrefab = PrefabUtility.SaveAsPrefabAsset(patientInstance, prefabInstancePath);
+            }
 
             if (!batchMode) Selection.activeObject = prefabAsset;
             else Selection.activeObject = null;
