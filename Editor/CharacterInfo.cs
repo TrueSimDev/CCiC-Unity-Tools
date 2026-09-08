@@ -21,6 +21,7 @@ using UnityEditor;
 using UnityEngine;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using TrueSim.Runtime.CCiC.CharacterTemplates;
 
 namespace Reallusion.Import
 {
@@ -120,6 +121,7 @@ namespace Reallusion.Import
         private bool bakeSeparatePrefab = true;
         private bool retainCustomBodyShaders = true;
         private bool retainCustomAnimator = true;
+        private string materialConversionTableGUID = "";
         
         public struct GUIDRemap
         {
@@ -256,6 +258,7 @@ namespace Reallusion.Import
         public bool BakeSeparatePrefab { get { return bakeSeparatePrefab; } set { bakeSeparatePrefab = value; } }       
         public bool RetainCustomBodyShaders { get { return retainCustomBodyShaders; } set { retainCustomBodyShaders = value; } }
         public bool RetainCustomAnimator { get { return retainCustomAnimator; } set {  retainCustomAnimator = value; } }
+        public string MaterialConversionTableGUID { get { return materialConversionTableGUID;  } set { materialConversionTableGUID = value; } }
         public TexSizeQuality QualTexSize { get { return qualTexSize; } set { qualTexSize = value; } }
         public TexCompressionQuality QualTexCompress { get { return qualTexCompress; } set { qualTexCompress = value; } }
 
@@ -264,7 +267,8 @@ namespace Reallusion.Import
         private EyeQuality builtQualEyes = EyeQuality.Parallax;
         private HairQuality builtQualHair = HairQuality.TwoPass;
         private bool builtBakeCustomShaders = true;
-        private bool builtBakeSeparatePrefab = true;        
+        private bool builtBakeSeparatePrefab = true;
+        private string builtMaterialConversionTableGUID = "";
 
         public ShaderFeatureFlags BuiltShaderFlags { get; private set; } = ShaderFeatureFlags.NoFeatures;
         public bool BuiltFeatureWrinkleMaps => (BuiltShaderFlags & ShaderFeatureFlags.WrinkleMaps) > 0;
@@ -337,7 +341,8 @@ namespace Reallusion.Import
             qualEyes = from.qualEyes;
             qualHair = from.qualHair;
             bakeCustomShaders = from.bakeCustomShaders;
-            bakeSeparatePrefab = from.bakeSeparatePrefab;  
+            bakeSeparatePrefab = from.bakeSeparatePrefab;
+            materialConversionTableGUID = from.materialConversionTableGUID;
             ShaderFlags = from.ShaderFlags;
             FixCharSettings();
         }
@@ -352,6 +357,7 @@ namespace Reallusion.Import
             builtQualHair = qualHair;
             builtBakeCustomShaders = bakeCustomShaders;
             builtBakeSeparatePrefab = bakeSeparatePrefab;
+            builtMaterialConversionTableGUID = materialConversionTableGUID;
             BuiltShaderFlags = ShaderFlags;
         }        
 
@@ -742,6 +748,17 @@ namespace Reallusion.Import
             }
         }
 
+        public bool TryGetMaterialConversionTable(out MaterialConversionTable materialConversionTable)
+        {
+            materialConversionTable = null;
+            if(materialConversionTableGUID == "")
+            {
+                return false;
+            }
+            materialConversionTable = AssetDatabase.LoadAssetByGUID<MaterialConversionTable>(new GUID(materialConversionTableGUID));
+            return true;
+        }
+
         public void Refresh()
         {
             if (jsonData != null) jsonData = Util.GetJsonData(jsonFilepath);
@@ -1065,6 +1082,9 @@ namespace Reallusion.Import
                     case "bakeSeparatePrefab":
                         bakeSeparatePrefab = value == "true" ? true : false;                        
                         break;
+                    case "materialConversionTableGUID":
+                        materialConversionTableGUID = value;
+                        break;
                     case "generation":
                         generation = (BaseGeneration)System.Enum.Parse(typeof(BaseGeneration), value);
                         break;
@@ -1133,6 +1153,7 @@ namespace Reallusion.Import
             writer.WriteLine("tempHairBake=" + (tempHairBake ? "true" : "false"));
             writer.WriteLine("bakeCustomShaders=" + (builtBakeCustomShaders ? "true" : "false"));
             writer.WriteLine("bakeSeparatePrefab=" + (builtBakeSeparatePrefab ? "true" : "false"));
+            writer.WriteLine("materialConversionTableGUID=" + builtMaterialConversionTableGUID);
             writer.WriteLine("shaderFlags=" + (int)BuiltShaderFlags);
             writer.WriteLine("animationSetup=" + (animationSetup ? "true" : "false"));
             writer.WriteLine("animationRetargeted=" + ((int)animationRetargeted).ToString());

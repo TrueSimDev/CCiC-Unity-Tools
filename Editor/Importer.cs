@@ -23,6 +23,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Runtime.Serialization;
+using TrueSim.Runtime.CCiC.CharacterTemplates;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Diagnostics;
@@ -41,6 +42,7 @@ namespace Reallusion.Import
         private readonly string fbmFolder;
         private readonly string texFolder;
         private readonly string materialsFolder;
+        private readonly string customMaterialsFolder;
         private readonly string characterName;
         private readonly string motionPrefix;
         private readonly EntityId id;
@@ -53,6 +55,7 @@ namespace Reallusion.Import
         private Dictionary<Material, Texture2D> bakedDetailMaps;
         private Dictionary<Material, Texture2D> bakedThicknessMaps;
         private Dictionary<Material, Texture2D> bakedHDRPMaps;
+        private Dictionary<string, Material> convertedMaterials;
         private readonly BaseGeneration generation;
         private readonly bool blenderProject;
         private float characterBoneScale;
@@ -62,6 +65,7 @@ namespace Reallusion.Import
         public List<AnimationClip> clipListForTimeLine = new List<AnimationClip>();
 
         public const string MATERIALS_FOLDER = "Materials";
+        public const string CUSTOM_MATERIALS_FOLDER = "Custom Materials";
         public const string PREFABS_FOLDER = "Prefabs";
         public const string BAKE_SUFFIX = "_Baked";
         
@@ -250,6 +254,9 @@ namespace Reallusion.Import
             string parentMaterialsFolder = Util.CreateFolder(fbxFolder, MATERIALS_FOLDER);
             materialsFolder = Util.CreateFolder(parentMaterialsFolder, characterName);
             Util.LogInfo("Using material folder: " + materialsFolder);
+            customMaterialsFolder = Util.CreateFolder(materialsFolder, CUSTOM_MATERIALS_FOLDER);
+            Util.LogInfo("Using custom material folder: " + materialsFolder);
+
 
             // fetch the character json export data.            
             jsonData = info.JsonData;            
@@ -275,6 +282,7 @@ namespace Reallusion.Import
             bakedDetailMaps = new Dictionary<Material, Texture2D>();
             bakedThicknessMaps = new Dictionary<Material, Texture2D>();
             bakedHDRPMaps = new Dictionary<Material, Texture2D>();
+            convertedMaterials = new Dictionary<string, Material>();
         }
 
         public GameObject Import(bool batchMode = false)
@@ -481,6 +489,11 @@ namespace Reallusion.Import
             {
                 var patientInstance = PrefabUtility.InstantiatePrefab(prefabAsset) as GameObject;
                 var patientPrefab = PrefabUtility.SaveAsPrefabAsset(patientInstance, prefabInstancePath);
+                if (characterInfo.TryGetMaterialConversionTable(out var materialConversionTable))
+                {
+                    materialConversionTable.Apply(patientPrefab, ref convertedMaterials);
+                }
+                PrefabUtility.SavePrefabAsset(patientPrefab);
             }
 
             if (!batchMode) Selection.activeObject = prefabAsset;
@@ -562,6 +575,13 @@ namespace Reallusion.Import
                     {
                         Util.LogInfo("    Material name: " + sourceName + " already processed.");
                     }
+                }
+
+                //After verifying all materials, we now create converted copies using the MaterialConverionTable.
+                if(characterInfo.MaterialConversionTableGUID != "")
+                {
+                    var materialConversionTable = AssetDatabase.LoadAssetByGUID<MaterialConversionTable>(new GUID(characterInfo.MaterialConversionTableGUID));
+                    materialConversionTable.Convert(renderer.sharedMaterials, customMaterialsFolder, characterInfo.name, ref convertedMaterials);
                 }
             }
         }

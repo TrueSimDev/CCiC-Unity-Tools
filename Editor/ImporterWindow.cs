@@ -1004,11 +1004,25 @@ namespace Reallusion.Import
 
             if (EditorGUILayout.DropdownButton(
                 content: new GUIContent(contextCharacter.RetainCustomAnimator ? "Retain Custom Animator" : "Use CC Animator"),
-                focusType: FocusType.Passive))
+                focusType: FocusType.Passive))  
             {
                 GenericMenu menu = new GenericMenu();
                 menu.AddItem(new GUIContent("Retain Custom Animator"), contextCharacter.RetainCustomAnimator, RetainAnimatorOptionSelected, true);
                 menu.AddItem(new GUIContent("Use CC Animator"), !contextCharacter.RetainCustomAnimator, RetainAnimatorOptionSelected, false);
+                menu.ShowAsContext();
+            }
+
+
+            if(EditorGUILayout.DropdownButton(
+                content: new GUIContent(contextCharacter.MaterialConversionTableGUID != "" ? AssetDatabase.GUIDToAssetPath(contextCharacter.MaterialConversionTableGUID) : "None"),
+                focusType: FocusType.Passive))
+            {
+                GenericMenu menu = new GenericMenu();
+                var guids = AssetDatabase.FindAssets("t:MaterialConversionTable");
+                foreach(var guid in guids)
+                {
+                    menu.AddItem(new GUIContent(AssetDatabase.GUIDToAssetPath(guid), guid), contextCharacter.MaterialConversionTableGUID == guid, MaterialConversionTableSelected, guid);
+                } 
                 menu.ShowAsContext();
             }
             EditorGUI.EndDisabledGroup();
@@ -1591,6 +1605,12 @@ namespace Reallusion.Import
             contextCharacter.RetainCustomAnimator = (bool)sel;
         }
 
+        private void MaterialConversionTableSelected(object guid)
+        {
+            contextCharacter.MaterialConversionTableGUID = (string)guid;
+            Debug.Log(guid);
+        }
+
         public static void TrySetMultiPass(bool state)
         {
             ImporterWindow window = ImporterWindow.Current;
@@ -1748,7 +1768,7 @@ namespace Reallusion.Import
                 baker.BakeHQHairDiffuse();
 
                 contextCharacter.tempHairBake = true;
-                contextCharacter.Write();
+                contextCharacter.Write(); 
             }
         }
 
