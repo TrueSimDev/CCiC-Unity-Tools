@@ -991,18 +991,6 @@ namespace Reallusion.Import
 
             GUILayout.Space(8f);
 
-            EditorGUI.BeginDisabledGroup(EditorApplication.isPlaying || contextCharacter.BuiltBasicMaterials);
-            if (EditorGUILayout.DropdownButton(
-                content: new GUIContent(contextCharacter.RetainCustomAnimator ? "Retain Custom Animator" : "Use CC Animator"),
-                focusType: FocusType.Passive))  
-            {
-                GenericMenu menu = new GenericMenu();
-                menu.AddItem(new GUIContent("Retain Custom Animator"), contextCharacter.RetainCustomAnimator, RetainAnimatorOptionSelected, true);
-                menu.AddItem(new GUIContent("Use CC Animator"), !contextCharacter.RetainCustomAnimator, RetainAnimatorOptionSelected, false);
-                menu.ShowAsContext();
-            }
-
-
             if(EditorGUILayout.DropdownButton(
                 content: new GUIContent(contextCharacter.MaterialConversionTableGUID != "" ? AssetDatabase.GUIDToAssetPath(contextCharacter.MaterialConversionTableGUID) : "None"),
                 focusType: FocusType.Passive))
@@ -1583,11 +1571,6 @@ namespace Reallusion.Import
         private void BakePrefabOptionSelected(object sel)
         {
             contextCharacter.BakeSeparatePrefab = (bool)sel;
-        }
-
-        private void RetainAnimatorOptionSelected(object sel)
-        {
-            contextCharacter.RetainCustomAnimator = (bool)sel;
         }
 
         private void MaterialConversionTableSelected(object guid)

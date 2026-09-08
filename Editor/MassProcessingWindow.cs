@@ -971,16 +971,6 @@ namespace Reallusion.Import
 
                 GUILayout.Space(12f);
 
-                if (EditorGUILayout.DropdownButton(
-                    content: new GUIContent(characterSettings.RetainCustomAnimator ? "Retain Custom Animator" : "Use CC Animator"),
-                    focusType: FocusType.Passive))
-                {
-                    GenericMenu menu = new GenericMenu();
-                    menu.AddItem(new GUIContent("Retain Custom Animator"), characterSettings.RetainCustomAnimator, RetainAnimatorOptionSelected, true);
-                    menu.AddItem(new GUIContent("Use CC Animator"), !characterSettings.RetainCustomAnimator, RetainAnimatorOptionSelected, false);
-                    menu.ShowAsContext();
-                }
-
                 GUILayout.Space(8f);
 
                 GUILayout.BeginHorizontal();
@@ -1068,7 +1058,6 @@ namespace Reallusion.Import
                     if (characterSettings.ShaderFlags != original.ShaderFlags) dirty = true;
                     if (characterSettings.BakeCustomShaders != original.BakeCustomShaders) dirty = true;
                     if (characterSettings.BakeSeparatePrefab != original.BakeSeparatePrefab) dirty = true;
-                    if (characterSettings.RetainCustomAnimator != original.RetainCustomAnimator) dirty = true;
                     if (characterSettings.MaterialConversionTableGUID != original.MaterialConversionTableGUID) dirty = true;
                 }
             }
@@ -1363,13 +1352,6 @@ namespace Reallusion.Import
             characterSettings.BakeSeparatePrefab = (bool)sel;
             ValidateSettings(characterSettings);
         }
-
-        private void RetainAnimatorOptionSelected(object sel)
-        {
-            characterSettings.RetainCustomAnimator = (bool)sel;
-            ValidateSettings(characterSettings);
-        }
-
 
         private void OnDisable()
         {

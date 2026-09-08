@@ -384,16 +384,6 @@ namespace Reallusion.Import
             string prefabAssetPath = RL.InitCharacterPrefab(characterInfo);
             RuntimeAnimatorController controller = null;
             Avatar avatar = null;
-            //Load animator controller asset if it is allready present on prefab.
-            if (characterInfo.RetainCustomAnimator)
-            {
-                if (AssetDatabase.LoadAssetAtPath(prefabAssetPath, typeof(GameObject)) is GameObject obj && obj != null)
-                {
-                    Animator animator = obj.GetComponent<Animator>();
-                    controller = animator.runtimeAnimatorController;
-                    avatar = animator.avatar;
-                }
-            }
             GameObject prefabInstance = RL.InstantiateModelFromSource(characterInfo, fbx, prefabAssetPath);
 
             // setup 2 pass hair in the prefab.
@@ -472,13 +462,6 @@ namespace Reallusion.Import
                 }
 
                 characterInfo.UpdateAnimationRetargeting();
-            }
-
-            if (characterInfo.RetainCustomAnimator)
-            {
-                Animator animator = prefabInstance.GetComponent<Animator>();
-                animator.runtimeAnimatorController = controller;
-                animator.avatar = avatar;
             }
 
             // save final prefab instance and remove from scene
