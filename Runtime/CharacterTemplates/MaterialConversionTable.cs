@@ -2,6 +2,8 @@ using UnityEngine;
 using Sirenix.OdinInspector;
 using System.Collections.Generic;
 using System.Text;
+using System.IO;
+
 
 
 #if UNITY_EDITOR
@@ -78,10 +80,14 @@ namespace TrueSim.Runtime.CCiC.CharacterTemplates
                 return;
             }
 
-            var childMaterial = new Material(parentMaterial)
-            {
-                parent = parentMaterial
-            };
+            var materialPath = $"{destination}/{_customMaterialName}_{materialSuffix}.mat";
+            var assetExists = AssetDatabase.AssetPathExists(materialPath);
+            var childMaterial = assetExists ?
+                AssetDatabase.LoadAssetAtPath<Material>(materialPath) :
+                new Material(parentMaterial)
+                {
+                    parent = parentMaterial
+                };
 
             for(int i = 0; i < _copyPairs.Length; i++)
             {
@@ -91,7 +97,10 @@ namespace TrueSim.Runtime.CCiC.CharacterTemplates
             {
                 Debug.LogWarning($"{defaultMaterial.name} could not be added to dictionary");
             }
-            AssetDatabase.CreateAsset(childMaterial, $"{destination}/{_customMaterialName}_{materialSuffix}.mat");
+            if (!assetExists)
+            {
+                AssetDatabase.CreateAsset(childMaterial, materialPath);
+            }
         }
 
         private Material GetByName(string name, string[] folders = null)
