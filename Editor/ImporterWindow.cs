@@ -1003,6 +1003,20 @@ namespace Reallusion.Import
                 } 
                 menu.ShowAsContext();
             }
+
+            if(EditorGUILayout.DropdownButton(
+                content: new GUIContent(contextCharacter.AnimationOverrideControllerTemplateGUID != "" ? AssetDatabase.GUIDToAssetPath(contextCharacter.AnimationOverrideControllerTemplateGUID) : "None"),
+                focusType: FocusType.Passive))
+            {
+                GenericMenu menu = new GenericMenu();
+                var guids = AssetDatabase.FindAssets("t:AnimationOverrideControllerTemplate");
+                foreach(var guid in guids)
+                {
+                    menu.AddItem(new GUIContent(AssetDatabase.GUIDToAssetPath(guid), guid), contextCharacter.AnimationOverrideControllerTemplateGUID == guid, AnimationOverrideControllerTemplateSelected, guid);
+                }
+                menu.ShowAsContext();
+            }
+
             EditorGUI.EndDisabledGroup();
 
             GUILayout.Space(8f);
@@ -1577,6 +1591,12 @@ namespace Reallusion.Import
         {
             contextCharacter.MaterialConversionTableGUID = (string)guid;
         }
+
+        private void AnimationOverrideControllerTemplateSelected(object guid)
+        {
+            contextCharacter.AnimationOverrideControllerTemplateGUID = (string)guid;
+        }
+
 
         public static void TrySetMultiPass(bool state)
         {

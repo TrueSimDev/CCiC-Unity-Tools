@@ -120,6 +120,7 @@ namespace Reallusion.Import
         private bool bakeCustomShaders = true;
         private bool bakeSeparatePrefab = true;
         private string materialConversionTableGUID = "";
+        private string animationOverrideControllerTemplateGUID = "";
         
         public struct GUIDRemap
         {
@@ -255,6 +256,7 @@ namespace Reallusion.Import
         public bool BakeCustomShaders { get { return bakeCustomShaders; } set { bakeCustomShaders = value; } }
         public bool BakeSeparatePrefab { get { return bakeSeparatePrefab; } set { bakeSeparatePrefab = value; } }       
         public string MaterialConversionTableGUID { get { return materialConversionTableGUID;  } set { materialConversionTableGUID = value; } }
+        public string AnimationOverrideControllerTemplateGUID { get { return animationOverrideControllerTemplateGUID; } set { animationOverrideControllerTemplateGUID = value; } }
         public TexSizeQuality QualTexSize { get { return qualTexSize; } set { qualTexSize = value; } }
         public TexCompressionQuality QualTexCompress { get { return qualTexCompress; } set { qualTexCompress = value; } }
 
@@ -265,6 +267,7 @@ namespace Reallusion.Import
         private bool builtBakeCustomShaders = true;
         private bool builtBakeSeparatePrefab = true;
         private string builtMaterialConversionTableGUID = "";
+        private string builtAnimationOverrideControllerTemplateGUID = "";
 
         public ShaderFeatureFlags BuiltShaderFlags { get; private set; } = ShaderFeatureFlags.NoFeatures;
         public bool BuiltFeatureWrinkleMaps => (BuiltShaderFlags & ShaderFeatureFlags.WrinkleMaps) > 0;
@@ -339,6 +342,7 @@ namespace Reallusion.Import
             bakeCustomShaders = from.bakeCustomShaders;
             bakeSeparatePrefab = from.bakeSeparatePrefab;
             materialConversionTableGUID = from.materialConversionTableGUID;
+            animationOverrideControllerTemplateGUID = from.animationOverrideControllerTemplateGUID;
             ShaderFlags = from.ShaderFlags;
             FixCharSettings();
         }
@@ -354,6 +358,7 @@ namespace Reallusion.Import
             builtBakeCustomShaders = bakeCustomShaders;
             builtBakeSeparatePrefab = bakeSeparatePrefab;
             builtMaterialConversionTableGUID = materialConversionTableGUID;
+            builtAnimationOverrideControllerTemplateGUID = animationOverrideControllerTemplateGUID;
             BuiltShaderFlags = ShaderFlags;
         }        
 
@@ -755,6 +760,17 @@ namespace Reallusion.Import
             return true;
         }
 
+        public bool TryGetAnimationOverrideControllerTemplate(out AnimationOverrideControllerTemplate animationOverrideControllerTemplate)
+        {
+            animationOverrideControllerTemplate = null;
+            if(animationOverrideControllerTemplateGUID == "")
+            {
+                return false;
+            }
+            animationOverrideControllerTemplate = AssetDatabase.LoadAssetByGUID<AnimationOverrideControllerTemplate>(new GUID(animationOverrideControllerTemplateGUID));
+            return true;
+        }
+
         public void Refresh()
         {
             if (jsonData != null) jsonData = Util.GetJsonData(jsonFilepath);
@@ -1081,6 +1097,9 @@ namespace Reallusion.Import
                     case "materialConversionTableGUID":
                         materialConversionTableGUID = value;
                         break;
+                    case "animationOverrideControllerTemplateGUID":
+                        animationOverrideControllerTemplateGUID = value;
+                        break;
                     case "generation":
                         generation = (BaseGeneration)System.Enum.Parse(typeof(BaseGeneration), value);
                         break;
@@ -1150,6 +1169,7 @@ namespace Reallusion.Import
             writer.WriteLine("bakeCustomShaders=" + (builtBakeCustomShaders ? "true" : "false"));
             writer.WriteLine("bakeSeparatePrefab=" + (builtBakeSeparatePrefab ? "true" : "false"));
             writer.WriteLine("materialConversionTableGUID=" + builtMaterialConversionTableGUID);
+            writer.WriteLine("animationOverrideControllerTemplateGUID=" + builtAnimationOverrideControllerTemplateGUID);
             writer.WriteLine("shaderFlags=" + (int)BuiltShaderFlags);
             writer.WriteLine("animationSetup=" + (animationSetup ? "true" : "false"));
             writer.WriteLine("animationRetargeted=" + ((int)animationRetargeted).ToString());

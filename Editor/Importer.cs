@@ -476,6 +476,10 @@ namespace Reallusion.Import
                 {
                     materialConversionTable.Apply(patientPrefab, ref convertedMaterials);
                 }
+                if(characterInfo.TryGetAnimationOverrideControllerTemplate(out var animationOverrideControllerTemplate))
+                {
+                    animationOverrideControllerTemplate.Apply(patientPrefab, characterInfo.CharacterName);
+                }
                 PrefabUtility.SavePrefabAsset(patientPrefab);
             }
 
@@ -561,9 +565,8 @@ namespace Reallusion.Import
                 }
 
                 //After verifying all materials, we now create converted copies using the MaterialConverionTable.
-                if(characterInfo.MaterialConversionTableGUID != "")
+                if(characterInfo.TryGetMaterialConversionTable(out var materialConversionTable))
                 {
-                    var materialConversionTable = AssetDatabase.LoadAssetByGUID<MaterialConversionTable>(new GUID(characterInfo.MaterialConversionTableGUID));
                     materialConversionTable.Convert(renderer.sharedMaterials, customMaterialsFolder, characterInfo.name, ref convertedMaterials);
                 }
             }
