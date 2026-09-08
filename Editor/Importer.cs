@@ -480,6 +480,10 @@ namespace Reallusion.Import
                 {
                     animationOverrideControllerTemplate.Apply(patientPrefab, characterInfo.CharacterName);
                 }
+                if(characterInfo.TryGetTwistBoneTemplate(out var twistBoneTemplate))
+                {
+                    twistBoneTemplate.Apply(patientPrefab, prefabInstancePath);
+                }
                 PrefabUtility.SavePrefabAsset(patientPrefab);
             }
 

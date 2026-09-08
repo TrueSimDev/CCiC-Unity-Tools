@@ -1017,6 +1017,19 @@ namespace Reallusion.Import
                 menu.ShowAsContext();
             }
 
+            if(EditorGUILayout.DropdownButton(
+                content: new GUIContent(contextCharacter.TwistBoneTemplateGUID != "" ? AssetDatabase.GUIDToAssetPath(contextCharacter.TwistBoneTemplateGUID) : "None"),
+                focusType: FocusType.Passive))
+            {
+                GenericMenu menu = new GenericMenu();
+                var guids = AssetDatabase.FindAssets("t:TwistBoneTemplate");
+                foreach(var guid in guids)
+                {
+                    menu.AddItem(new GUIContent(AssetDatabase.GUIDToAssetPath(guid), guid), contextCharacter.TwistBoneTemplateGUID == guid, TwistBoneTemplateSelected, guid);
+                }
+                menu.ShowAsContext();
+            }
+
             EditorGUI.EndDisabledGroup();
 
             GUILayout.Space(8f);
@@ -1597,6 +1610,10 @@ namespace Reallusion.Import
             contextCharacter.AnimationOverrideControllerTemplateGUID = (string)guid;
         }
 
+        private void TwistBoneTemplateSelected(object guid)
+        {
+            contextCharacter.TwistBoneTemplateGUID = (string)guid;
+        }
 
         public static void TrySetMultiPass(bool state)
         {
