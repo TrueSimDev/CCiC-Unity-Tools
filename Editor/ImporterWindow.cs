@@ -992,16 +992,6 @@ namespace Reallusion.Import
             GUILayout.Space(8f);
 
             EditorGUI.BeginDisabledGroup(EditorApplication.isPlaying || contextCharacter.BuiltBasicMaterials);
-            if(EditorGUILayout.DropdownButton(
-                content: new GUIContent(contextCharacter.RetainCustomBodyShaders ? "Retain Custom Body Shaders" : "Use CC Shaders"),
-                focusType: FocusType.Passive))
-            {
-                GenericMenu menu = new GenericMenu();
-                menu.AddItem(new GUIContent("Retain Custom Body Shaders"), contextCharacter.RetainCustomBodyShaders, RetainShaderOptionSelected, true);
-                menu.AddItem(new GUIContent("Use CC Shaders"), !contextCharacter.RetainCustomBodyShaders, RetainShaderOptionSelected, false);
-                menu.ShowAsContext();
-            }
-
             if (EditorGUILayout.DropdownButton(
                 content: new GUIContent(contextCharacter.RetainCustomAnimator ? "Retain Custom Animator" : "Use CC Animator"),
                 focusType: FocusType.Passive))  
@@ -1595,11 +1585,6 @@ namespace Reallusion.Import
             contextCharacter.BakeSeparatePrefab = (bool)sel;
         }
 
-        private void RetainShaderOptionSelected(object sel)
-        {
-            contextCharacter.RetainCustomBodyShaders = (bool)sel;
-        }
-
         private void RetainAnimatorOptionSelected(object sel)
         {
             contextCharacter.RetainCustomAnimator = (bool)sel;
@@ -1608,7 +1593,6 @@ namespace Reallusion.Import
         private void MaterialConversionTableSelected(object guid)
         {
             contextCharacter.MaterialConversionTableGUID = (string)guid;
-            Debug.Log(guid);
         }
 
         public static void TrySetMultiPass(bool state)

@@ -556,7 +556,7 @@ namespace Reallusion.Import
                         bool isNail = sourceName == "Std_Nails";
                         bool isHeadOrBody = (materialType == MaterialType.Skin || materialType == MaterialType.Head) && !isNail;
 
-                        if ((isHeadOrBody && !characterInfo.RetainCustomBodyShaders) || !isHeadOrBody)
+                        if (isHeadOrBody)
                         {
                             // re-use or create the material.
                             Material mat = CreateRemapMaterial(materialType, sharedMat, sourceName, matJson);

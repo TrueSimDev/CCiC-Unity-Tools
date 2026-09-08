@@ -972,16 +972,6 @@ namespace Reallusion.Import
                 GUILayout.Space(12f);
 
                 if (EditorGUILayout.DropdownButton(
-                    content: new GUIContent(characterSettings.RetainCustomBodyShaders ? "Retain Custom Body Shaders" : "Use CC Shaders"),
-                    focusType: FocusType.Passive))
-                {
-                    GenericMenu menu = new GenericMenu();
-                    menu.AddItem(new GUIContent("Retain Custom Body Shaders"), characterSettings.RetainCustomBodyShaders, RetainShaderOptionSelected, true);
-                    menu.AddItem(new GUIContent("Use CC Shaders"), !characterSettings.RetainCustomBodyShaders, RetainShaderOptionSelected, false);
-                    menu.ShowAsContext();
-                }
-
-                if (EditorGUILayout.DropdownButton(
                     content: new GUIContent(characterSettings.RetainCustomAnimator ? "Retain Custom Animator" : "Use CC Animator"),
                     focusType: FocusType.Passive))
                 {
@@ -1078,8 +1068,8 @@ namespace Reallusion.Import
                     if (characterSettings.ShaderFlags != original.ShaderFlags) dirty = true;
                     if (characterSettings.BakeCustomShaders != original.BakeCustomShaders) dirty = true;
                     if (characterSettings.BakeSeparatePrefab != original.BakeSeparatePrefab) dirty = true;
-                    if (characterSettings.RetainCustomBodyShaders != original.RetainCustomBodyShaders) dirty = true;
                     if (characterSettings.RetainCustomAnimator != original.RetainCustomAnimator) dirty = true;
+                    if (characterSettings.MaterialConversionTableGUID != original.MaterialConversionTableGUID) dirty = true;
                 }
             }
             characterSettings.settingsChanged = dirty;
@@ -1371,12 +1361,6 @@ namespace Reallusion.Import
         private void BakePrefabOptionSelected(object sel)
         {
             characterSettings.BakeSeparatePrefab = (bool)sel;
-            ValidateSettings(characterSettings);
-        }
-
-        private void RetainShaderOptionSelected(object sel)
-        {
-            characterSettings.RetainCustomBodyShaders = (bool)sel;
             ValidateSettings(characterSettings);
         }
 
