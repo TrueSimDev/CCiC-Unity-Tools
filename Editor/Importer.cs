@@ -55,7 +55,6 @@ namespace Reallusion.Import
         private Dictionary<Material, Texture2D> bakedDetailMaps;
         private Dictionary<Material, Texture2D> bakedThicknessMaps;
         private Dictionary<Material, Texture2D> bakedHDRPMaps;
-        private Dictionary<string, Material> convertedMaterials;
         private readonly BaseGeneration generation;
         private readonly bool blenderProject;
         private float characterBoneScale;
@@ -282,7 +281,6 @@ namespace Reallusion.Import
             bakedDetailMaps = new Dictionary<Material, Texture2D>();
             bakedThicknessMaps = new Dictionary<Material, Texture2D>();
             bakedHDRPMaps = new Dictionary<Material, Texture2D>();
-            convertedMaterials = new Dictionary<string, Material>();
         }
 
         public GameObject Import(bool batchMode = false)
@@ -472,17 +470,25 @@ namespace Reallusion.Import
             {
                 var patientInstance = PrefabUtility.InstantiatePrefab(prefabAsset) as GameObject;
                 var patientPrefab = PrefabUtility.SaveAsPrefabAsset(patientInstance, prefabInstancePath);
-                if (characterInfo.TryGetMaterialConversionTable(out var materialConversionTable))
+                using (var editingScope = new PrefabUtility.EditPrefabContentsScope(prefabInstancePath))
                 {
-                    materialConversionTable.Apply(patientPrefab, ref convertedMaterials);
-                }
-                if(characterInfo.TryGetAnimationOverrideControllerTemplate(out var animationOverrideControllerTemplate))
-                {
-                    animationOverrideControllerTemplate.Apply(patientPrefab, characterInfo.CharacterName);
-                }
-                if(characterInfo.TryGetTwistBoneTemplate(out var twistBoneTemplate))
-                {
-                    twistBoneTemplate.Apply(patientPrefab, prefabInstancePath);
+                    if (characterInfo.TryGetMaterialConversionTable(out var materialConversionTable))
+                    {
+                        var convertedMaterials = new Dictionary<string, Material>();
+                        foreach (var renderer in patientPrefab.GetComponentsInChildren<Renderer>())
+                        {
+                            materialConversionTable.Convert(renderer.sharedMaterials, customMaterialsFolder, characterInfo.name, ref convertedMaterials);
+                        }
+                        materialConversionTable.Apply(editingScope, ref convertedMaterials);
+                    }
+                    if (characterInfo.TryGetAnimationOverrideControllerTemplate(out var animationOverrideControllerTemplate))
+                    {
+                        animationOverrideControllerTemplate.Apply(editingScope, characterInfo.CharacterName);
+                    }
+                    if (characterInfo.TryGetTwistBoneTemplate(out var twistBoneTemplate))
+                    {
+                        twistBoneTemplate.Apply(editingScope);
+                    }
                 }
                 PrefabUtility.SavePrefabAsset(patientPrefab);
             }
@@ -514,7 +520,7 @@ namespace Reallusion.Import
             foreach (Renderer renderer in renderers)
             {
                 ProcessObjectBuildPass(renderer);
-            }            
+            }
         }
 
         private void ProcessObjectBuildPass(Renderer renderer)
@@ -568,12 +574,6 @@ namespace Reallusion.Import
                     {
                         Util.LogInfo("    Material name: " + sourceName + " already processed.");
                     }
-                }
-
-                //After verifying all materials, we now create converted copies using the MaterialConverionTable.
-                if(characterInfo.TryGetMaterialConversionTable(out var materialConversionTable))
-                {
-                    materialConversionTable.Convert(renderer.sharedMaterials, customMaterialsFolder, characterInfo.name, ref convertedMaterials);
                 }
             }
         }

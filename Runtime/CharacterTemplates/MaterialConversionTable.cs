@@ -3,16 +3,15 @@ using Sirenix.OdinInspector;
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
-
-
-
 #if UNITY_EDITOR
+using static UnityEditor.PrefabUtility;
 using UnityEditor;
 #endif
 
 
 namespace TrueSim.Runtime.CCiC.CharacterTemplates
 {
+#if UNITY_EDITOR
     [CreateAssetMenu(fileName = "Material Conversion Table", menuName = "TrueSim/CCiC/Material Conversion Table")]
     public class MaterialConversionTable : ScriptableObject
     {
@@ -27,23 +26,23 @@ namespace TrueSim.Runtime.CCiC.CharacterTemplates
             AssetDatabase.SaveAssets();
         }
 
-        public void Apply(GameObject targetObject, ref Dictionary<string, Material> convertedMaterials)
+        public void Apply(EditPrefabContentsScope contentScope, ref Dictionary<string, Material> convertedMaterials)
         {
             var stringBuilder = new StringBuilder();
-            foreach (var renderer in targetObject.GetComponentsInChildren<Renderer>())
+            foreach (var renderer in contentScope.prefabContentsRoot.GetComponentsInChildren<Renderer>())
             {
                 var sharedMaterials = renderer.sharedMaterials;
                 for (int i = 0; i < renderer.sharedMaterials.Length; i++)
                 {
                     if (convertedMaterials.TryGetValue(sharedMaterials[i].name, out var material))
                     {
-                        stringBuilder.AppendLine($"{targetObject.name}/{renderer.gameObject.name} material {i} set to {material.name}");
+                        stringBuilder.AppendLine($"{contentScope.prefabContentsRoot.name}/{renderer.gameObject.name} material {i} set to {material.name}");
                         sharedMaterials[i] = material;
                     }
                 }
                 renderer.sharedMaterials = sharedMaterials;
             }
-            Debug.Log(stringBuilder.ToString(), targetObject);
+            Debug.Log(stringBuilder.ToString());
         }
     }
 
@@ -137,6 +136,9 @@ namespace TrueSim.Runtime.CCiC.CharacterTemplates
             if (!defaultMaterialInstance.HasProperty(_defaultParameterName))
             {
                 Debug.LogError($"{_defaultParameterName} could not be found on material : {defaultMaterialInstance.name}");
+                Debug.LogError($"{AssetDatabase.GetAssetPath(defaultMaterialInstance)}", defaultMaterialInstance);
+                Debug.LogError($"{defaultMaterialInstance.shader.name}");
+                Debug.LogError($"{MaterialEditor.GetMaterialProperty(new Object[1] { defaultMaterialInstance }, _defaultParameterName).propertyType}");
                 return;
             }
 
@@ -176,4 +178,5 @@ namespace TrueSim.Runtime.CCiC.CharacterTemplates
             }
         }
     }
+#endif
 }

@@ -1,23 +1,22 @@
 using UnityEngine;
 using UnityEngine.Animations.Rigging;
-
 #if UNITY_EDITOR
 using UnityEditor;
+using static UnityEditor.PrefabUtility;
 #endif
 
 namespace TrueSim.Runtime.CCiC.CharacterTemplates
 {
+#if UNITY_EDITOR
     [CreateAssetMenu(fileName = "Twist Bone Template", menuName = "TrueSim/CCiC/Twist Bone Template")]
     public class TwistBoneTemplate : ScriptableObject
     {
         [SerializeField] private GameObject _twistRigPrefab;
         [SerializeField] private TwistBoneReference[] _twistBoneReferences;
 
-        public void Apply(GameObject targetObject, string assetPath)
+        public void Apply(EditPrefabContentsScope contentScope)
         {
-            using (var editingScope = new PrefabUtility.EditPrefabContentsScope(assetPath))
-            {
-                var characterRoot = editingScope.prefabContentsRoot;
+                var characterRoot = contentScope.prefabContentsRoot;
                 var rigBuilder = characterRoot.AddComponent<RigBuilder>();
                 var twistRigInstance = PrefabUtility.InstantiatePrefab(_twistRigPrefab, characterRoot.transform) as GameObject;
                 for (int i = 0; i < _twistBoneReferences.Length; i++)
@@ -29,8 +28,7 @@ namespace TrueSim.Runtime.CCiC.CharacterTemplates
                     }
                     _twistBoneReferences[i].Bind(characterRoot, target.GetComponent<TwistCorrection>());
                 }
-                rigBuilder.layers.Add(new RigLayer(twistRigInstance.GetComponent<Rig>()));
-            }
+                rigBuilder.layers.Add(new RigLayer(twistRigInstance.GetComponent<Rig>())); 
         }
 
         private Transform FindChildByRecursion(Transform aParent, string aName)
@@ -84,4 +82,5 @@ namespace TrueSim.Runtime.CCiC.CharacterTemplates
             return null;
         }
     }
+#endif
 }
