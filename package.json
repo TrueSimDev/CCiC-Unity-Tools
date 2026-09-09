@@ -1,6 +1,6 @@
 {
   "name": "com.soupday.cc3_unity_tools",
-  "version": "2.1.2",
+  "version": "2.1.2-2",
   "displayName": "CC/iC Unity Tools",
   "description": "Unity importer for Character Creator 3 & 4 and iClone 7 and 8.",
   "unity": "2021.1",
@@ -14,8 +14,8 @@
   ],
   "author": {
     "name": "Victor Soupday",
-    "email": "user@noreply.com",
-    "url": "https://github.com/soupday"
+    "url": "https://github.com/soupday",
+    "email": "user@noreply.com"
   },
   "type": "tool",
   "dependencies": {
