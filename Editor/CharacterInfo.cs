@@ -123,6 +123,7 @@ namespace Reallusion.Import
         private string materialConversionTableGUID = "";
         private string animationOverrideControllerTemplateGUID = "";
         private string twistBoneTemplateGUID = "";
+        private string characterAssetGeneratorGUID = "";
 
 
         public struct GUIDRemap
@@ -262,6 +263,7 @@ namespace Reallusion.Import
         public string MaterialConversionTableGUID { get { return materialConversionTableGUID;  } set { materialConversionTableGUID = value; } }
         public string AnimationOverrideControllerTemplateGUID { get { return animationOverrideControllerTemplateGUID; } set { animationOverrideControllerTemplateGUID = value; } }
         public string TwistBoneTemplateGUID { get { return twistBoneTemplateGUID; } set { twistBoneTemplateGUID = value; } }
+        public string CharacterAssetGeneratorGUID { get { return characterAssetGeneratorGUID; } set { characterAssetGeneratorGUID = value; } }
         public TexSizeQuality QualTexSize { get { return qualTexSize; } set { qualTexSize = value; } }
         public TexCompressionQuality QualTexCompress { get { return qualTexCompress; } set { qualTexCompress = value; } }
 
@@ -275,6 +277,7 @@ namespace Reallusion.Import
         private string builtMaterialConversionTableGUID = "";
         private string builtAnimationOverrideControllerTemplateGUID = "";
         private string builtTwistBoneTemplateGUID = "";
+        private string builtCharacterAssetGenerator = "";
 
         public ShaderFeatureFlags BuiltShaderFlags { get; private set; } = ShaderFeatureFlags.NoFeatures;
         public bool BuiltFeatureWrinkleMaps => (BuiltShaderFlags & ShaderFeatureFlags.WrinkleMaps) > 0;
@@ -352,6 +355,7 @@ namespace Reallusion.Import
             materialConversionTableGUID = from.materialConversionTableGUID;
             animationOverrideControllerTemplateGUID = from.animationOverrideControllerTemplateGUID;
             twistBoneTemplateGUID = from.twistBoneTemplateGUID;
+            characterAssetGeneratorGUID = from.characterAssetGeneratorGUID;
             ShaderFlags = from.ShaderFlags;
             FixCharSettings();
         }
@@ -370,6 +374,7 @@ namespace Reallusion.Import
             builtMaterialConversionTableGUID = materialConversionTableGUID;
             builtAnimationOverrideControllerTemplateGUID = animationOverrideControllerTemplateGUID;
             builtTwistBoneTemplateGUID = twistBoneTemplateGUID;
+            builtCharacterAssetGenerator = characterAssetGeneratorGUID;
             BuiltShaderFlags = ShaderFlags;
         }        
 
@@ -793,6 +798,17 @@ namespace Reallusion.Import
             return true;
         }
 
+        public bool TryGetCharacterAssetGenerator(out CharacterAssetGenerator characterAssetGenerator)
+        {
+            characterAssetGenerator = null;
+            if(characterAssetGeneratorGUID == "")
+            {
+                return false;
+            }
+            characterAssetGenerator = AssetDatabase.LoadAssetByGUID<CharacterAssetGenerator>(new GUID(characterAssetGeneratorGUID));
+            return true;
+        }
+
         public void Refresh()
         {
             if (jsonData != null) jsonData = Util.GetJsonData(jsonFilepath);
@@ -1128,6 +1144,9 @@ namespace Reallusion.Import
                     case "twistBoneTemplateGUID":
                         twistBoneTemplateGUID = value;
                         break;
+                    case "characterAssetGeneratorGUID":
+                        characterAssetGeneratorGUID = value;
+                        break;
                     case "generation":
                         generation = (BaseGeneration)System.Enum.Parse(typeof(BaseGeneration), value);
                         break;
@@ -1200,6 +1219,7 @@ namespace Reallusion.Import
             writer.WriteLine("materialConversionTableGUID=" + builtMaterialConversionTableGUID);
             writer.WriteLine("animationOverrideControllerTemplateGUID=" + builtAnimationOverrideControllerTemplateGUID);
             writer.WriteLine("twistBoneTemplateGUID=" + builtTwistBoneTemplateGUID);
+            writer.WriteLine("characterAssetGenerator=" + builtCharacterAssetGenerator);
             writer.WriteLine("shaderFlags=" + (int)BuiltShaderFlags);
             writer.WriteLine("animationSetup=" + (animationSetup ? "true" : "false"));
             writer.WriteLine("animationRetargeted=" + ((int)animationRetargeted).ToString());

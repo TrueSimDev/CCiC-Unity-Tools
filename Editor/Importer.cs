@@ -489,6 +489,10 @@ namespace Reallusion.Import
                     {
                         twistBoneTemplate.Apply(editingScope);
                     }
+                    if (characterInfo.TryGetCharacterAssetGenerator(out var characterAssetGenerator))
+                    {
+                        characterAssetGenerator.Apply(editingScope, characterInfo.CharacterName, characterInfo.path);
+                    }
                 }
                 PrefabUtility.SavePrefabAsset(patientPrefab);
             }
