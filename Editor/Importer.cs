@@ -545,9 +545,11 @@ namespace Reallusion.Import
                         Util.LogInfo("    Material name: " + sourceName + ", type:" + materialType.ToString());
 
                         bool isNail = sourceName == "Std_Nails";
+                        bool isHair = materialType == MaterialType.Hair;
                         bool isHeadOrBody = (materialType == MaterialType.Skin || materialType == MaterialType.Head) && !isNail;
 
-                        if (isHeadOrBody)
+                        //IF is part of body (skin, hair, nails, teeth, eyes, etc)
+                        if (true)
                         {
                             // re-use or create the material.
                             Material mat = CreateRemapMaterial(materialType, sharedMat, sourceName, matJson);
@@ -907,18 +909,33 @@ namespace Reallusion.Import
 
             Material remapMaterial = sharedMaterial;
             bool reuseExistingMaterial = true;
+            bool nonBodyMaterial = materialType == MaterialType.DefaultAlpha || materialType == MaterialType.BlendAlpha || materialType == MaterialType.DefaultOpaque;
 
             // if the material is missing or it is embedded in the fbx, create a new unique material:
             if (!remapMaterial || AssetDatabase.GetAssetPath(remapMaterial) == fbxPath)
             {
-                string materialAssetPath = Path.Combine(materialsFolder, sourceName + ".mat");
+                string materialAssetPath = "";
+                bool assetPathExists = false;
+                if (nonBodyMaterial)
+                {
+                    foreach (var guid in AssetDatabase.FindAssetGUIDs($"{sourceName} t:Material", new[] { characterInfo.PropAssetPath }))
+                    {
+                        if(AssetDatabase.GetMainAssetTypeFromGUID(guid) == typeof(Material))
+                        {
+                            materialAssetPath = AssetDatabase.GUIDToAssetPath(guid);
+                            assetPathExists = true;
+                            break;
+                        }
+                    }
+                }
+                
+                if(!assetPathExists)
+                {
+                    materialAssetPath = Path.Combine(materialsFolder, sourceName + ".mat");
+                    assetPathExists = AssetDatabase.AssetPathExists(materialAssetPath);
+                }
 
-#if UNITY_2023_1_OR_NEWER
-                bool assetPathExists = AssetDatabase.AssetPathExists(materialAssetPath);
-#else
-                bool assetPathExists = File.Exists(materialAssetPath.UnityAssetPathToFullPath());
-#endif
-                if (reuseExistingMaterial && assetPathExists)//AssetDatabase.AssetPathExists(materialAssetPath))
+                if (reuseExistingMaterial && assetPathExists)
                 { 
                     remapMaterial = AssetDatabase.LoadAssetAtPath<Material>(materialAssetPath);
                     Util.LogInfo("    Using Existing material: " + remapMaterial.name);                    

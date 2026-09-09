@@ -93,7 +93,7 @@ namespace Reallusion.Import
         const float ACTION_BUTTON_SPACE = 4f;
         const float BUTTON_HEIGHT = 40f;
         const float INFO_HEIGHT = 80f;
-        const float OPTION_HEIGHT = 220f;
+        const float OPTION_HEIGHT = 280f;
         const float ACTION_HEIGHT = 76f;
         const float ICON_WIDTH = 100f; // re-purposed below for draggable width icon area
         const float ACTION_WIDTH = ACTION_BUTTON_SIZE + 12f;
@@ -991,6 +991,18 @@ namespace Reallusion.Import
 
             GUILayout.Space(8f);
 
+            if (EditorGUILayout.DropdownButton(
+                content: new GUIContent(contextCharacter.PropAssetPath),
+                focusType: FocusType.Passive))
+            {
+                GenericMenu menu = new GenericMenu();
+                foreach(var path in AssetDatabase.GetSubFolders("Assets"))
+                {
+                    menu.AddItem(new GUIContent(path), contextCharacter.PropAssetPath == path, PropMaterialPathSelected, path);
+                }
+                menu.ShowAsContext();
+            }
+
             if(EditorGUILayout.DropdownButton(
                 content: new GUIContent(contextCharacter.MaterialConversionTableGUID != "" ? AssetDatabase.GUIDToAssetPath(contextCharacter.MaterialConversionTableGUID) : "None"),
                 focusType: FocusType.Passive))
@@ -1598,6 +1610,11 @@ namespace Reallusion.Import
         private void BakePrefabOptionSelected(object sel)
         {
             contextCharacter.BakeSeparatePrefab = (bool)sel;
+        }
+
+        private void PropMaterialPathSelected(object path)
+        {
+            contextCharacter.PropAssetPath = (string)path;
         }
 
         private void MaterialConversionTableSelected(object guid)

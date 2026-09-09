@@ -119,6 +119,7 @@ namespace Reallusion.Import
         public RigOverride UnknownRigType { get; set; }
         private bool bakeCustomShaders = true;
         private bool bakeSeparatePrefab = true;
+        private string propAssetPath = "Assets";
         private string materialConversionTableGUID = "";
         private string animationOverrideControllerTemplateGUID = "";
         private string twistBoneTemplateGUID = "";
@@ -256,7 +257,8 @@ namespace Reallusion.Import
         public bool CoverageHair { get { return qualHair == HairQuality.Coverage; } }
         public bool DefaultHair { get { return qualHair == HairQuality.Default; } }
         public bool BakeCustomShaders { get { return bakeCustomShaders; } set { bakeCustomShaders = value; } }
-        public bool BakeSeparatePrefab { get { return bakeSeparatePrefab; } set { bakeSeparatePrefab = value; } }       
+        public bool BakeSeparatePrefab { get { return bakeSeparatePrefab; } set { bakeSeparatePrefab = value; } }    
+        public string PropAssetPath { get { return propAssetPath; } set { propAssetPath = value; } }
         public string MaterialConversionTableGUID { get { return materialConversionTableGUID;  } set { materialConversionTableGUID = value; } }
         public string AnimationOverrideControllerTemplateGUID { get { return animationOverrideControllerTemplateGUID; } set { animationOverrideControllerTemplateGUID = value; } }
         public string TwistBoneTemplateGUID { get { return twistBoneTemplateGUID; } set { twistBoneTemplateGUID = value; } }
@@ -269,6 +271,7 @@ namespace Reallusion.Import
         private HairQuality builtQualHair = HairQuality.TwoPass;
         private bool builtBakeCustomShaders = true;
         private bool builtBakeSeparatePrefab = true;
+        private string builtPropAssetPath = "Assets";
         private string builtMaterialConversionTableGUID = "";
         private string builtAnimationOverrideControllerTemplateGUID = "";
         private string builtTwistBoneTemplateGUID = "";
@@ -345,6 +348,7 @@ namespace Reallusion.Import
             qualHair = from.qualHair;
             bakeCustomShaders = from.bakeCustomShaders;
             bakeSeparatePrefab = from.bakeSeparatePrefab;
+            propAssetPath = from.propAssetPath;
             materialConversionTableGUID = from.materialConversionTableGUID;
             animationOverrideControllerTemplateGUID = from.animationOverrideControllerTemplateGUID;
             twistBoneTemplateGUID = from.twistBoneTemplateGUID;
@@ -362,6 +366,7 @@ namespace Reallusion.Import
             builtQualHair = qualHair;
             builtBakeCustomShaders = bakeCustomShaders;
             builtBakeSeparatePrefab = bakeSeparatePrefab;
+            builtPropAssetPath = propAssetPath;
             builtMaterialConversionTableGUID = materialConversionTableGUID;
             builtAnimationOverrideControllerTemplateGUID = animationOverrideControllerTemplateGUID;
             builtTwistBoneTemplateGUID = twistBoneTemplateGUID;
@@ -1111,6 +1116,9 @@ namespace Reallusion.Import
                     case "bakeSeparatePrefab":
                         bakeSeparatePrefab = value == "true" ? true : false;                        
                         break;
+                    case "propAssetPath":
+                        propAssetPath = value;
+                        break;
                     case "materialConversionTableGUID":
                         materialConversionTableGUID = value;
                         break;
@@ -1188,6 +1196,7 @@ namespace Reallusion.Import
             writer.WriteLine("tempHairBake=" + (tempHairBake ? "true" : "false"));
             writer.WriteLine("bakeCustomShaders=" + (builtBakeCustomShaders ? "true" : "false"));
             writer.WriteLine("bakeSeparatePrefab=" + (builtBakeSeparatePrefab ? "true" : "false"));
+            writer.WriteLine("propAssetPath=" + builtPropAssetPath);
             writer.WriteLine("materialConversionTableGUID=" + builtMaterialConversionTableGUID);
             writer.WriteLine("animationOverrideControllerTemplateGUID=" + builtAnimationOverrideControllerTemplateGUID);
             writer.WriteLine("twistBoneTemplateGUID=" + builtTwistBoneTemplateGUID);
