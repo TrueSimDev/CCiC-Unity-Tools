@@ -992,7 +992,7 @@ namespace Reallusion.Import
             GUILayout.Space(8f);
 
             if (EditorGUILayout.DropdownButton(
-                content: new GUIContent(contextCharacter.PropAssetPath),
+                content: new GUIContent("Prop Asset Path : " + contextCharacter.PropAssetPath),
                 focusType: FocusType.Passive))
             {
                 GenericMenu menu = new GenericMenu();
@@ -1004,7 +1004,7 @@ namespace Reallusion.Import
             }
 
             if(EditorGUILayout.DropdownButton(
-                content: new GUIContent(contextCharacter.MaterialConversionTableGUID != "" ? AssetDatabase.GUIDToAssetPath(contextCharacter.MaterialConversionTableGUID) : "None"),
+                content: new GUIContent("Material Conversion Table : " + (contextCharacter.MaterialConversionTableGUID != "" ? AssetDatabase.GUIDToAssetPath(contextCharacter.MaterialConversionTableGUID) : "None")),
                 focusType: FocusType.Passive))
             {
                 GenericMenu menu = new GenericMenu();
@@ -1017,7 +1017,7 @@ namespace Reallusion.Import
             }
 
             if(EditorGUILayout.DropdownButton(
-                content: new GUIContent(contextCharacter.AnimationOverrideControllerTemplateGUID != "" ? AssetDatabase.GUIDToAssetPath(contextCharacter.AnimationOverrideControllerTemplateGUID) : "None"),
+                content: new GUIContent("Character Asset Generator : " + (contextCharacter.AnimationOverrideControllerTemplateGUID != "" ? AssetDatabase.GUIDToAssetPath(contextCharacter.AnimationOverrideControllerTemplateGUID) : "None")),
                 focusType: FocusType.Passive))
             {
                 GenericMenu menu = new GenericMenu();
@@ -1030,7 +1030,7 @@ namespace Reallusion.Import
             }
 
             if(EditorGUILayout.DropdownButton(
-                content: new GUIContent(contextCharacter.TwistBoneTemplateGUID != "" ? AssetDatabase.GUIDToAssetPath(contextCharacter.TwistBoneTemplateGUID) : "None"),
+                content: new GUIContent("Twist Bone Template : " + (contextCharacter.TwistBoneTemplateGUID != "" ? AssetDatabase.GUIDToAssetPath(contextCharacter.TwistBoneTemplateGUID) : "None")),
                 focusType: FocusType.Passive))
             {
                 GenericMenu menu = new GenericMenu();
@@ -1043,7 +1043,7 @@ namespace Reallusion.Import
             }
 
             if (EditorGUILayout.DropdownButton(
-              content: new GUIContent(contextCharacter.CharacterAssetGeneratorGUID != "" ? AssetDatabase.GUIDToAssetPath(contextCharacter.CharacterAssetGeneratorGUID) : "None"),
+              content: new GUIContent("Character Asset Generator : " + (contextCharacter.CharacterAssetGeneratorGUID != "" ? AssetDatabase.GUIDToAssetPath(contextCharacter.CharacterAssetGeneratorGUID) : "None")),
               focusType: FocusType.Passive))
             {
                 GenericMenu menu = new GenericMenu();
