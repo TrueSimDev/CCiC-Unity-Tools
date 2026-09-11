@@ -1477,6 +1477,9 @@ namespace Reallusion.Import
                 .Select(s => s[random.Next(s.Length)]).ToArray());
         }
 
-
+        public static string Right(this string input, int count)
+        {
+            return input.Substring(Mathf.Max(input.Length - count, 0), Mathf.Min(count, input.Length));
+        }
     }    
 }
