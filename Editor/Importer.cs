@@ -562,10 +562,10 @@ namespace Reallusion.Import
                         if (true)
                         {
                             // re-use or create the material.
-                            Material mat = CreateRemapMaterial(materialType, sharedMat, sourceName, matJson);
+                            Material mat = CreateRemapMaterial(materialType, sharedMat, sourceName, matJson, out var materialReused);
 
                             // connect the textures.
-                            if (mat) ProcessTextures(obj, sourceName, sharedMat, mat, materialType, matJson);
+                            if (mat && !materialReused) ProcessTextures(obj, sourceName, sharedMat, mat, materialType, matJson);
 
                             processedBuildMaterials.Add(sourceName);
                         }
@@ -887,8 +887,9 @@ namespace Reallusion.Import
         }
 
         private Material CreateRemapMaterial(MaterialType materialType, Material sharedMaterial, 
-                                             string sourceName, QuickJSON matJson)
+                                             string sourceName, QuickJSON matJson, out bool materialReused)
         {
+            materialReused = false;
             bool useAmplify = characterInfo.FeatureUseAmplifyShaders;
             bool useTessellation = characterInfo.UseTessellation(materialType, matJson);
 
@@ -914,7 +915,6 @@ namespace Reallusion.Import
             Material remapMaterial = sharedMaterial;
             bool reuseExistingMaterial = true;
             bool nonBodyMaterial = materialType == MaterialType.DefaultAlpha || materialType == MaterialType.BlendAlpha || materialType == MaterialType.DefaultOpaque;
-            bool existingMaterialUsed = false;
 
             // if the material is missing or it is embedded in the fbx, create a new unique material:
             if (!remapMaterial || AssetDatabase.GetAssetPath(remapMaterial) == fbxPath)
@@ -943,7 +943,7 @@ namespace Reallusion.Import
                 if (reuseExistingMaterial && assetPathExists)
                 { 
                     remapMaterial = AssetDatabase.LoadAssetAtPath<Material>(materialAssetPath);
-                    existingMaterialUsed = true;
+                    materialReused = true;
                     Util.LogInfo("    Using Existing material: " + remapMaterial.name);                    
                 }
                 else
@@ -961,8 +961,10 @@ namespace Reallusion.Import
                 importer.AddRemap(new AssetImporter.SourceAssetIdentifier(typeof(Material), sourceName), remapMaterial);
             }
 
-            if (!existingMaterialUsed)
+            if (materialReused)
             {
+                return remapMaterial;
+            }
                 // if the material shader doesn't match, update the shader.            
                 if (remapMaterial.shader != shader)
                     remapMaterial.shader = shader;
@@ -981,7 +983,7 @@ namespace Reallusion.Import
                 if (remapPath == fbxPath) Util.LogError("remapPath: " + remapPath + " is fbxPath (shouldn't happen)!");
                 if (remapPath != fbxPath && AssetDatabase.WriteImportSettingsIfDirty(remapPath))
                     importAssets.Add(AssetDatabase.GetAssetPath(remapMaterial));
-            }
+            
             return remapMaterial;
         }        
 
