@@ -491,7 +491,7 @@ namespace Reallusion.Import
                     }
                     if (characterInfo.TryGetCharacterAssetGenerator(out var characterAssetGenerator))
                     {
-                        characterAssetGenerator.Apply(editingScope, characterInfo.CharacterName, characterInfo.path);
+                        characterAssetGenerator.Apply(editingScope, characterInfo.CharacterName, characterInfo.folder.Replace(@"\", "/"));
                     }
                 }
                 PrefabUtility.SavePrefabAsset(patientPrefab);
