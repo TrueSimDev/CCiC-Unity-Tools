@@ -914,6 +914,7 @@ namespace Reallusion.Import
             Material remapMaterial = sharedMaterial;
             bool reuseExistingMaterial = true;
             bool nonBodyMaterial = materialType == MaterialType.DefaultAlpha || materialType == MaterialType.BlendAlpha || materialType == MaterialType.DefaultOpaque;
+            bool existingMaterialUsed = false;
 
             // if the material is missing or it is embedded in the fbx, create a new unique material:
             if (!remapMaterial || AssetDatabase.GetAssetPath(remapMaterial) == fbxPath)
@@ -942,6 +943,7 @@ namespace Reallusion.Import
                 if (reuseExistingMaterial && assetPathExists)
                 { 
                     remapMaterial = AssetDatabase.LoadAssetAtPath<Material>(materialAssetPath);
+                    existingMaterialUsed = true;
                     Util.LogInfo("    Using Existing material: " + remapMaterial.name);                    
                 }
                 else
@@ -959,25 +961,27 @@ namespace Reallusion.Import
                 importer.AddRemap(new AssetImporter.SourceAssetIdentifier(typeof(Material), sourceName), remapMaterial);
             }
 
-            // if the material shader doesn't match, update the shader.            
-            if (remapMaterial.shader != shader)
-                remapMaterial.shader = shader;
-
-            // copy the template material properties to the remapped material.
-            if (templateMaterial)
+            if (!existingMaterialUsed)
             {
-                Util.LogInfo("    Using template material: " + templateMaterial.name);
-                remapMaterial.CopyPropertiesFromMaterial(templateMaterial);
+                // if the material shader doesn't match, update the shader.            
+                if (remapMaterial.shader != shader)
+                    remapMaterial.shader = shader;
+
+                // copy the template material properties to the remapped material.
+                if (templateMaterial)
+                {
+                    Util.LogInfo("    Using template material: " + templateMaterial.name);
+                    remapMaterial.CopyPropertiesFromMaterial(templateMaterial);
+                }
+
+                Pipeline.UpgradeShader(remapMaterial, useTessellation, useAmplify);
+
+                // add the path of the remapped material for later re-import.
+                string remapPath = AssetDatabase.GetAssetPath(remapMaterial);
+                if (remapPath == fbxPath) Util.LogError("remapPath: " + remapPath + " is fbxPath (shouldn't happen)!");
+                if (remapPath != fbxPath && AssetDatabase.WriteImportSettingsIfDirty(remapPath))
+                    importAssets.Add(AssetDatabase.GetAssetPath(remapMaterial));
             }
-
-            Pipeline.UpgradeShader(remapMaterial, useTessellation, useAmplify);
-
-            // add the path of the remapped material for later re-import.
-            string remapPath = AssetDatabase.GetAssetPath(remapMaterial);
-            if (remapPath == fbxPath) Util.LogError("remapPath: " + remapPath + " is fbxPath (shouldn't happen)!");
-            if (remapPath != fbxPath && AssetDatabase.WriteImportSettingsIfDirty(remapPath))
-                importAssets.Add(AssetDatabase.GetAssetPath(remapMaterial));
-
             return remapMaterial;
         }        
 
