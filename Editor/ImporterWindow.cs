@@ -1004,53 +1004,53 @@ namespace Reallusion.Import
             }
 
             if(EditorGUILayout.DropdownButton(
-                content: new GUIContent("Material Conversion Table : " + (contextCharacter.MaterialConversionTableGUID != "" ? AssetDatabase.GUIDToAssetPath(contextCharacter.MaterialConversionTableGUID).Right(1000) : "None")),
+                content: new GUIContent("Material Conversion Table : " + (contextCharacter.MaterialConversionTableGUID != "" ? AssetDatabase.GUIDToAssetPath(contextCharacter.MaterialConversionTableGUID).Split("/").Last() : "None")),
                 focusType: FocusType.Passive))
             {
                 GenericMenu menu = new GenericMenu();
                 var guids = AssetDatabase.FindAssets("t:MaterialConversionTable");
                 foreach(var guid in guids)
                 {
-                    menu.AddItem(new GUIContent(AssetDatabase.GUIDToAssetPath(guid), guid), contextCharacter.MaterialConversionTableGUID == guid, MaterialConversionTableSelected, guid);
+                    menu.AddItem(new GUIContent(AssetDatabase.GUIDToAssetPath(guid).Split("/").Last(), guid), contextCharacter.MaterialConversionTableGUID == guid, MaterialConversionTableSelected, guid);
                 } 
                 menu.ShowAsContext();
             }
 
             if(EditorGUILayout.DropdownButton(
-                content: new GUIContent("Character Asset Generator : " + (contextCharacter.AnimationOverrideControllerTemplateGUID != "" ? AssetDatabase.GUIDToAssetPath(contextCharacter.AnimationOverrideControllerTemplateGUID).Right(1000) : "None")),
+                content: new GUIContent("Animation Override Controller Template : " + (contextCharacter.AnimationOverrideControllerTemplateGUID != "" ? AssetDatabase.GUIDToAssetPath(contextCharacter.AnimationOverrideControllerTemplateGUID).Split("/").Last() : "None")),
                 focusType: FocusType.Passive))
             {
                 GenericMenu menu = new GenericMenu();
                 var guids = AssetDatabase.FindAssets("t:AnimationOverrideControllerTemplate");
                 foreach(var guid in guids)
                 {
-                    menu.AddItem(new GUIContent(AssetDatabase.GUIDToAssetPath(guid), guid), contextCharacter.AnimationOverrideControllerTemplateGUID == guid, AnimationOverrideControllerTemplateSelected, guid);
+                    menu.AddItem(new GUIContent(AssetDatabase.GUIDToAssetPath(guid).Split("/").Last(), guid), contextCharacter.AnimationOverrideControllerTemplateGUID == guid, AnimationOverrideControllerTemplateSelected, guid);
                 }
                 menu.ShowAsContext();
             }
 
             if(EditorGUILayout.DropdownButton(
-                content: new GUIContent("Twist Bone Template : " + (contextCharacter.TwistBoneTemplateGUID != "" ? AssetDatabase.GUIDToAssetPath(contextCharacter.TwistBoneTemplateGUID).Right(1000) : "None")),
+                content: new GUIContent("Twist Bone Template : " + (contextCharacter.TwistBoneTemplateGUID != "" ? AssetDatabase.GUIDToAssetPath(contextCharacter.TwistBoneTemplateGUID).Split("/").Last() : "None")),
                 focusType: FocusType.Passive))
             {
                 GenericMenu menu = new GenericMenu();
                 var guids = AssetDatabase.FindAssets("t:TwistBoneTemplate");
                 foreach(var guid in guids)
                 {
-                    menu.AddItem(new GUIContent(AssetDatabase.GUIDToAssetPath(guid), guid), contextCharacter.TwistBoneTemplateGUID == guid, TwistBoneTemplateSelected, guid);
+                    menu.AddItem(new GUIContent(AssetDatabase.GUIDToAssetPath(guid).Split("/").Last(), guid), contextCharacter.TwistBoneTemplateGUID == guid, TwistBoneTemplateSelected, guid);
                 }
                 menu.ShowAsContext();
             }
 
             if (EditorGUILayout.DropdownButton(
-              content: new GUIContent("Character Asset Generator : " + (contextCharacter.CharacterAssetGeneratorGUID != "" ? AssetDatabase.GUIDToAssetPath(contextCharacter.CharacterAssetGeneratorGUID).Right(1000) : "None")),
+              content: new GUIContent("Character Asset Generator : " + (contextCharacter.CharacterAssetGeneratorGUID != "" ? AssetDatabase.GUIDToAssetPath(contextCharacter.CharacterAssetGeneratorGUID).Split("/").Last() : "None")),
               focusType: FocusType.Passive))
             {
                 GenericMenu menu = new GenericMenu();
                 var guids = AssetDatabase.FindAssets("t:CharacterAssetGenerator");
                 foreach (var guid in guids)
                 {
-                    menu.AddItem(new GUIContent(AssetDatabase.GUIDToAssetPath(guid), guid), contextCharacter.CharacterAssetGeneratorGUID == guid, CharacterAssetGeneratorSelected, guid);
+                    menu.AddItem(new GUIContent(AssetDatabase.GUIDToAssetPath(guid).Split("/").Last(), guid), contextCharacter.CharacterAssetGeneratorGUID == guid, CharacterAssetGeneratorSelected, guid);
                 }
                 menu.ShowAsContext();
             }
